@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Supply Chain App</title>
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+  <script src="app.js"></script>
+</head>
+<body>
+  <h1>Supply Chain App</h1>
+
+  <h2>Submit Answers</h2>
+  <form>
+    <label for="committed">Committed:</label>
+    <select id="committed">
+      <option value="Yes">Yes</option>
+      <option value="No">No</option>
+    </select>
+    <br>
+    <label for="riskFound">Risk Found:</label>
+    <select id="riskFound">
+      <option value="Yes">Yes</option>
+      <option value="No">No</option>
+    </select>
+    <br>
+    <label for="commitmentChanged">Commitment Changed:</label>
+    <select id="commitmentChanged">
+      <option value="Yes">Yes</option>
+      <option value="No">No</option>
+    </select>
+    <br>
+    <label for="newsUpdated">News Updated:</label>
+    <select id="newsUpdated">
+      <option value="Yes">Yes</option>
+      <option value="No">No</option>
+    </select>
+    <br>
+    <label for="hasBackupPlan">Has Backup Plan:</label>
+    <select id="hasBackupPlan">
+      <option value="Yes">Yes</option>
+      <option value="No">No</option>
+    </select>
+    <br>
+    <button type="button" onclick="submitAnswers()">Submit</button>
+  </form>
+
+  <h3>Block Info</h3>
+  <table id="blockInfoTable">
+    <!-- Table content will be added dynamically -->
+  </table>
+  <div id="buttonContainer"></div>
+  
+  <table id="blockInfoTable">
+    <thead>
+      <tr>
+        <th>Block Number</th>
+        <th>Block Hash</th>
+        <th>Block Timestamp</th>
+        <th>Gas Used</th>
+        <th>Contract Address</th>
+        <th>Wallet Address</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script src="app.js"></script>
+  <script>
+  window.addEventListener('load', async () => {
+        const loadButton = document.createElement('button');
+        loadButton.textContent = 'Load Block Info';
+        loadButton.addEventListener('click', populateBlockInfo);
+
+        const buttonContainer = document.querySelector('#buttonContainer');
+        buttonContainer.appendChild(loadButton);
+      });
+
+  async function populateBlockInfo() {
+    try {
+      const latestBlock = await web3.eth.getBlock('latest');
+      const blockNumber = latestBlock.number;
+      const blockHash = latestBlock.hash;
+      const blockTimestamp = new Date(latestBlock.timestamp * 1000).toUTCString();
+      const gasUsed = latestBlock.gasUsed;
+
+      const account = web3.eth.defaultAccount || 'Not Connected';
+
+      const tableBody = document.querySelector('#blockInfoTable tbody');
+
+      const newRow = document.createElement('tr');
+      newRow.innerHTML = `
+        <td>${blockNumber}</td>
+        <td>${blockHash}</td>
+        <td>${blockTimestamp}</td>
+        <td>${gasUsed}</td>
+        <td>${contractAddress}</td>
+        <td>${account}</td>
+      `;
+
+      tableBody.appendChild(newRow);
+    } catch (error) {
+      console.error('Error populating block info:', error);
+      alert('Error populating block info. Please check the console for details.');
+    }
+  }
+    </script>
+</body>
+</html>

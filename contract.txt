@@ -1,0 +1,75 @@
+pragma solidity 0.5.16;
+
+contract SupplyChain {
+    struct Partner {
+        string name;
+        bool committed;
+        bool riskFound;
+        bool commitmentChanged;
+        bool newsUpdated;
+        bool hasBackupPlan;
+        uint8 score;
+        bool assigned;
+    }
+
+    mapping(address => Partner) public partners;
+    address[] public rankingPartners;
+
+    event CommitmentStatusRecorded(address indexed partnerAddress, bool committed);
+    event RiskFoundStatusRecorded(address indexed partnerAddress, bool riskFound);
+    event CommitmentChangedStatusRecorded(address indexed partnerAddress, bool commitmentChanged);
+    event UpdatedNewsRecorded(address indexed partnerAddress, bool newsUpdated);
+    event BackupPlanRecorded(address indexed partnerAddress, bool hasBackupPlan);
+
+    // Assigns a ranking partner to answer the survey
+    function assignRankingPartner(address partnerAddress) public {
+        require(!partners[partnerAddress].assigned, "Partner is already assigned");
+        partners[partnerAddress].assigned = true;
+        rankingPartners.push(partnerAddress);
+    }
+
+    // Records the ranking partner's answer for the CommitmentStatus
+    function recordCommitmentStatus(address partnerAddress, bool committed) public {
+        require(partners[partnerAddress].assigned, "Partner is not assigned");
+        partners[partnerAddress].committed = committed;
+
+        emit CommitmentStatusRecorded(partnerAddress, committed);
+    }
+
+    // Records the ranking partner's answer for the RiskFoundStatus
+    function recordRiskFoundStatus(address partnerAddress, bool riskFound) public {
+        require(partners[partnerAddress].assigned, "Partner is not assigned");
+        partners[partnerAddress].riskFound = riskFound;
+
+        emit RiskFoundStatusRecorded(partnerAddress, riskFound);
+    }
+
+    // Records the ranking partner's answer for the CommitmentChangedStatus
+    function recordCommitmentChangedStatus(address partnerAddress, bool commitmentChanged) public {
+        require(partners[partnerAddress].assigned, "Partner is not assigned");
+        partners[partnerAddress].commitmentChanged = commitmentChanged;
+
+        emit CommitmentChangedStatusRecorded(partnerAddress, commitmentChanged);
+    }
+
+    // Records the ranking partner's answer for the UpdatedNews
+    function recordUpdatedNews(address partnerAddress, bool newsUpdated) public {
+        require(partners[partnerAddress].assigned, "Partner is not assigned");
+        partners[partnerAddress].newsUpdated = newsUpdated;
+
+        emit UpdatedNewsRecorded(partnerAddress, newsUpdated);
+    }
+
+    // Records the ranking partner's answer for the BackupPlan
+    function recordBackupPlan(address partnerAddress, bool hasBackupPlan) public {
+        require(partners[partnerAddress].assigned, "Partner is not assigned");
+        partners[partnerAddress].hasBackupPlan = hasBackupPlan;
+
+        emit BackupPlanRecorded(partnerAddress, hasBackupPlan);
+    }
+
+    // Retrieves the ranking partners
+    function getRankingPartners() public view returns (address[] memory) {
+        return rankingPartners;
+    }
+}
